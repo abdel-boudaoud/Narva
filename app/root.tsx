@@ -1,28 +1,38 @@
-import type { LinksFunction } from "@remix-run/cloudflare";
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  json,
 } from "@remix-run/react";
 
 import "./tailwind.css";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import HeadLine from "./components/HeadLine";
+import { isPreview } from "./components/isPreview";
+import { storyblokInit, apiPlugin } from "@storyblok/react";
+import Page from "./components/Page";
+const components = {
+  headline: HeadLine,
+  page: Page,
+};
+const isServer = typeof window === "undefined";
+const accessToken = isServer
+  ? process.env.STORYBLOK_TOKEN
+  : window.env.STORYBLOK_TOKEN;
+storyblokInit({
+  accessToken,
+  use: [apiPlugin],
+  components,
+  bridge: isPreview(),
+});
 
-export const links: LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-];
+export function Layout({ children }) {
+  const env = useLoaderData();
 
-export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
@@ -32,9 +42,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <Header />
         {children}
+
         <ScrollRestoration />
-        <Scripts />
+        <Scripts
+          dangerouslySetInnerHTML={{
+            __html: `window.env = ${JSON.stringify(env)}`,
+          }}
+        />
+        <Footer />
       </body>
     </html>
   );
@@ -43,3 +60,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return <Outlet />;
 }
+
+export const loader = async ({ params }) => {
+  let lang = params.lang || "default";
+
+  return json({
+    env: {
+      STORYBLOK_TOKEN: process.env.STORYBLOK_TOKEN,
+      STORYBLOK_IS_PREVIEW: process.env.STORYBLOK_IS_PREVIEW,
+    },
+  });
+};
