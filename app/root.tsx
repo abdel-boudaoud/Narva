@@ -15,23 +15,14 @@ import HeadLine from "./components/HeadLine";
 import { isPreview } from "./components/isPreview";
 import { storyblokInit, apiPlugin } from "@storyblok/react";
 import Page from "./components/Page";
+
 const components = {
   headline: HeadLine,
   page: Page,
 };
-const isServer = typeof window === "undefined";
-const accessToken = isServer
-  ? env.STORYBLOK_TOKEN
-  : window.env.STORYBLOK_TOKEN;
-storyblokInit({
-  accessToken,
-  use: [apiPlugin],
-  components,
-  bridge: isPreview(),
-});
 
 export function Layout({ children }) {
-  const env = useLoaderData();
+  const env = useLoaderData(); // Access loader data on the client side
 
   return (
     <html lang="en">
@@ -48,7 +39,7 @@ export function Layout({ children }) {
         <ScrollRestoration />
         <Scripts
           dangerouslySetInnerHTML={{
-            __html: `window.env = ${JSON.stringify(env)}`,
+            __html: `window.env = ${JSON.stringify(env)}`, // Inject env values into window.env
           }}
         />
         <Footer />
@@ -58,16 +49,28 @@ export function Layout({ children }) {
 }
 
 export default function App() {
+  const env = useLoaderData();
+
+  // Initialize Storyblok after the loader data is available
+  if (typeof window !== "undefined") {
+    storyblokInit({
+      accessToken: env.STORYBLOK_TOKEN, // Use env from loader data
+      use: [apiPlugin],
+      components,
+      bridge: env.previewMode === "yes", // Use preview mode from loader data
+    });
+  }
+
   return <Outlet />;
 }
 
-export const loader = async ({ params }) => {
+// Server-side loader to pass env variables to the client
+export const loader = async ({ params, env }) => {
   let lang = params.lang || "default";
+  const previewMode = isPreview(env); // Use env directly in server-side code
 
   return json({
-    env: {
-      STORYBLOK_TOKEN: process.env.STORYBLOK_TOKEN,
-      STORYBLOK_IS_PREVIEW: process.env.STORYBLOK_IS_PREVIEW,
-    },
+    STORYBLOK_TOKEN: env.STORYBLOK_TOKEN, // Pass STORYBLOK_TOKEN to the client
+    previewMode: previewMode ? "yes" : "no", // Pass preview mode to the client
   });
 };

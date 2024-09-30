@@ -2,7 +2,7 @@
 
 
 const isServer = typeof window === "undefined";
-const isPreview = () => {
+const isPreview = (env) => {
   let isPreviewValue = isServer
     ? env.STORYBLOK_IS_PREVIEW
     : window.env.STORYBLOK_IS_PREVIEW;
