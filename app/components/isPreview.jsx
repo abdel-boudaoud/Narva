@@ -1,12 +1,13 @@
-
-
-
 const isServer = typeof window === "undefined";
-const isPreview = (env) => {
+
+export default async function isPreview(context) {
+  const { env, cf, ctx } = context.cloudflare;
+
   let isPreviewValue = isServer
-    ? env.STORYBLOK_IS_PREVIEW
-    : window.env.STORYBLOK_IS_PREVIEW;
+    ? env.STORYBLOK_TOKEN
+    : env.STORYBLOK_IS_PREVIEW;
 
   return isPreviewValue === "yes";
-};
+}
+
 export { isPreview };
