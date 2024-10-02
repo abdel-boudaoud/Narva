@@ -1,13 +1,15 @@
 import { json } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
-
+import { initializeStoryblok } from "../utils/storyblokInit";
 import {
   getStoryblokApi,
   useStoryblokState,
   StoryblokComponent,
 } from "@storyblok/react";
 
-export const loader = async ({ params }) => {
+export const loader = async ({ params, context }) => {
+  // const { env, cf, ctx } = context.cloudflare;
+  initializeStoryblok(`rF9dcOIIiXK8sNGQLkliyQtt`);
   const slug = params.slug ?? "home";
 
   let sbParams = {
@@ -28,7 +30,10 @@ export const loader = async ({ params }) => {
   return json({ story: data?.story });
 };
 
-export default function Page() {
+export default function Page({ context }) {
+  // const { env, cf, ctx } = context.cloudflare;
+  initializeStoryblok(`rF9dcOIIiXK8sNGQLkliyQtt`);
+
   let { story } = useLoaderData();
 
   story = useStoryblokState(story);

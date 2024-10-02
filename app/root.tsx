@@ -12,32 +12,19 @@ import "./tailwind.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HeadLine from "./components/HeadLine";
-import { isPreview } from "./components/isPreview";
-import { storyblokInit, apiPlugin } from "@storyblok/react";
-import Page from "./components/Page";
+// import { isPreview } from "./components/isPreview";
+// import { storyblokInit, apiPlugin } from "@storyblok/react";
+// import Page from "./components/Page";
 
-const components = {
-  headline: HeadLine,
-  page: Page,
-};
-
-export  function getLoadContext({context}){
-  const { env, cf, ctx } = context.cloudflare;
-
-  return env
-}
-
-
-storyblokInit({
-  accessToken: "rF9dcOIIiXK8sNGQLkliyQtt",
-  use: [apiPlugin],
-  components,
-  bridge: isPreview(),
-});
+// const components = {
+//   headline: HeadLine,
+//   page: Page,
+// };
 
 export function Layout({ children }) {
-  const env = useLoaderData();
-  // console.log(env);
+  // const env = useLoaderData();
+  // const { STORYBLOK_TOKEN, STORYBLOK_IS_PREVIEW } = env;
+  
   return (
     <html lang="en">
       <head>
@@ -51,11 +38,11 @@ export function Layout({ children }) {
         {children}
 
         <ScrollRestoration />
-        <Scripts
+        {/* <Scripts
           dangerouslySetInnerHTML={{
             __html: `window.env = ${JSON.stringify(env.STORYBLOK_TOKEN)}`,
           }}
-        />
+        /> */}
 
         <Footer />
       </body>
@@ -72,9 +59,7 @@ export const loader = async ({ params, context }) => {
   const { env, cf, ctx } = context.cloudflare;
 
   return json({
-    env: {
-      STORYBLOK_TOKEN: env.STORYBLOK_TOKEN,
-      STORYBLOK_IS_PREVIEW: env.STORYBLOK_IS_PREVIEW,
-    },
+    STORYBLOK_TOKEN: env.STORYBLOK_TOKEN,
+    STORYBLOK_IS_PREVIEW: env.STORYBLOK_IS_PREVIEW,
   });
 };
