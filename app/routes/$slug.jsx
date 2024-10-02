@@ -8,8 +8,8 @@ import {
 } from "@storyblok/react";
 
 export const loader = async ({ params, context }) => {
-  // const { env, cf, ctx } = context.cloudflare;
-  initializeStoryblok(`rF9dcOIIiXK8sNGQLkliyQtt`);
+  const { env, cf, ctx } = context.cloudflare;
+  initializeStoryblok(env.STORYBLOK_TOKEN);
   const slug = params.slug ?? "home";
 
   let sbParams = {
@@ -32,7 +32,7 @@ export const loader = async ({ params, context }) => {
 
 export default function Page({ context }) {
   // const { env, cf, ctx } = context.cloudflare;
-  initializeStoryblok(`rF9dcOIIiXK8sNGQLkliyQtt`);
+  // initializeStoryblok(`rF9dcOIIiXK8sNGQLkliyQtt`);
 
   let { story } = useLoaderData();
 
