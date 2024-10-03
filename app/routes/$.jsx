@@ -1,30 +1,39 @@
-import { isPreview } from "../components/isPreview";
-
-export const loader = async ({ params, request }) => {
-  let version = isPreview() ? "draft" : "published";
-
-  let sbParams = {
-    version,
-    resolve_relations: ["popular-articles.articles"],
-    language,
-  };
-
-  const { data } = await getStoryblokApi()
-    .get(`cdn/stories/${slug}`, sbParams, { cache: "no-store" })
-    .catch((e) => ({ data: null }));
-
-  if (!data) throw new Response("Not Found", { status: 404 });
-
-  let { data: articles } = await getStoryblokApi().get(
-    `cdn/stories`,
-    {
-      version,
-      starts_with: "blog/",
-      language,
-      is_startpage: 0,
-    },
-    { cache: "no-store" }
+import { json } from "@remix-run/cloudflare";
+import { useLoaderData } from "@remix-run/react";
+ 
+import {
+  getStoryblokApi,
+  useStoryblokState,
+  StoryblokComponent,
+} from "@storyblok/react";
+ 
+export default function Page() {
+  let { story } = useLoaderData();
+  story = useStoryblokState(story);
+ 
+  return (
+    <>
+      <StoryblokComponent blok={story.content} />
+    </>
   );
-
-  return json({ story: data?.story, articles: articles?.stories });
+}
+ 
+export const loader = async ({ params}) => {
+  let slug = params["*"] ?? "home";
+  let blogSlug = params["*"] === "blog/" ? "blog/home" : null;
+ 
+  let sbParams = {
+    version: "draft",
+  };
+  let { data } = await getStoryblokApi()
+    .get(`cdn/stories/${blogSlug ? blogSlug : slug}`, sbParams)
+    .catch((e) => {
+      console.log("e", e);
+      return { data: null };
+    });
+ 
+  if (!data) {
+    throw new Response("Not Found", { status: 404 });
+  }
+  return json({ story: data?.story });
 };

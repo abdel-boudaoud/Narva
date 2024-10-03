@@ -32,7 +32,7 @@ export const loader = async ({ params, context }) => {
 
 export default function Page({ context }) {
   // const { env, cf, ctx } = context.cloudflare;
-  // initializeStoryblok(`rF9dcOIIiXK8sNGQLkliyQtt`);
+  // initializeStoryblok(env.STORYBLOK_TOKEN);
 
   let { story } = useLoaderData();
 

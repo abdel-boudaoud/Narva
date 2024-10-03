@@ -12,6 +12,7 @@ import "./tailwind.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HeadLine from "./components/HeadLine";
+import { initializeStoryblok } from "./utils/storyblokInit";
 // import { isPreview } from "./components/isPreview";
 // import { storyblokInit, apiPlugin } from "@storyblok/react";
 // import Page from "./components/Page";
@@ -57,7 +58,7 @@ export default function App() {
 export const loader = async ({ params, context }) => {
   let lang = params.lang || "default";
   const { env, cf, ctx } = context.cloudflare;
-
+  initializeStoryblok(env.STORYBLOK_TOKEN)
   return json({
     STORYBLOK_TOKEN: env.STORYBLOK_TOKEN,
     STORYBLOK_IS_PREVIEW: env.STORYBLOK_IS_PREVIEW,
