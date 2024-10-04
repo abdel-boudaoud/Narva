@@ -28,11 +28,11 @@ const Header = () => {
                 Contact
               </Link>
             </li>
-            {/* <li>
-              <Link to="/blogs" className="hover:text-blue-300">
+            <li>
+              <Link to="/blog" className="hover:text-blue-300">
                 blogs
               </Link>
-            </li> */}
+            </li>
           </ul>
         </nav>
       </div>

@@ -2,13 +2,15 @@ import { storyblokInit, apiPlugin } from "@storyblok/react";
 import Page from "../components/Page";
 import HeadLine from "../components/HeadLine";
 import { isPreview } from "../components/isPreview";
-import Article from "../components/Aticle";
-import Test from "../components/Test";
+import Article from "../components/Article";
+import AllArticles from "../components/AllArticles";
+import PopularArticles from "../components/PopularArticles";
 const components = {
   headline: HeadLine,
   page: Page,
+  "popular-articles": PopularArticles,
+  "all-articles": AllArticles,
   article: Article,
-  test: Test,
 };
 
 export function initializeStoryblok(accessToken) {

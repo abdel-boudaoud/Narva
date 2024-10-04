@@ -14,6 +14,7 @@ export const loader = async ({ params, context }) => {
 
   let sbParams = {
     version: "draft",
+    resolve_relations: ["popular-articles.articles"]
   };
 
   let { data } = await getStoryblokApi()
